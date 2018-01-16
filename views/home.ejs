@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <title>Home</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body ng-app="home" ng-controller="home">
+    <div class = "container" ng-model = "roleFinance" ng-show = "roleFinance">
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <!--<div class="navbar-header">
+                    <a class="navbar-brand" href="#">WebSiteName</a>
+                </div>-->
+                <ul class="nav navbar-nav" ng-model = "drafts" ng-show="drafts">
+
+                    <li class="active">
+                        <button type="button" class="btn btn-link">Draft Bills</button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn btn-link" ng-click = "toggleNavBar(1)">Bills</button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn btn-link" ng-click = "logout()">Logout</button>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-nav" ng-model="bills" ng-show="bills">
+                    <li>
+                        <button type="button" class="btn btn-link" ng-click = "toggleNavBar(0)">Draft Bills</button>
+                    </li>
+                    <li class = "active">
+                        <button type="button" class="btn btn-link">Bills</button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn btn-link" ng-click = "logout()">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div ng-show = "drafts">
+            <h3>Draft Bills</h3>
+            <p>Draft Bills to be approved by Finance</p>
+            <div ng-model = "errorMessage" ng-show="errorMessage != null && errorMessage != undefined">
+                <span id="errorMessage">{{errorMessage}}</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Usage ID</th>
+                        <th>Customer ID</th>
+                        <th>Month</th>
+                        <th>Year</th>
+                        <th>Overage Units</th>
+                        <th>Overage Unit Price</th>
+                        <th>Overage Amount</th>
+                        <th>Approve</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="tempData in financeDrafts">
+                            <td>{{tempData.usageID}}</td>
+                            <td>{{tempData.customerID}}</td>
+                            <td>{{tempData.month}}</td>
+                            <td>{{tempData.year}}</td>
+                            <td>{{tempData.apiUsage - tempData.monthlyapiLimit}}</td>
+                            <td>{{tempData.overageUnitCost}}</td>
+                            <td>{{(tempData.overageUnitCost)*(tempData.apiUsage - tempData.monthlyapiLimit)}}</td>
+                            <td>
+                                <button type="button" class="btn btn-success"
+                                       ng-click="approveFinance(
+                                                    $index,
+                                                    tempData.usageID,
+                                                    tempData.customerID,
+                                                    tempData.month,
+                                                    tempData.year,
+                                                    (tempData.apiUsage - tempData.monthlyapiLimit),
+                                                    tempData.overageUnitCost,
+                                                    ((tempData.overageUnitCost)*(tempData.apiUsage - tempData.monthlyapiLimit)))">
+                                    Approve
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div ng-show = "bills">
+            <h3>Final Bills</h3>
+            <p>Final Bills to be Sent by Finance</p>
+            <div ng-model = "errorMessageBills" ng-show="errorMessageBills != null && errorMessageBills != undefined">
+                <span id="errorMessage">{{errorMessageBills}}</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Usage ID</th>
+                        <th>Customer ID</th>
+                        <th>Month</th>
+                        <th>Year</th>
+                        <th>Overage Units</th>
+                        <th>Overage Unit Price</th>
+                        <th>Overage Amount</th>
+                        <th>Send</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="tempData in financeBills">
+                        <td>{{tempData.usageID}}</td>
+                        <td>{{tempData.customerID}}</td>
+                        <td>{{tempData.month}}</td>
+                        <td>{{tempData.year}}</td>
+                        <td>{{tempData.overageUnits}}</td>
+                        <td>{{tempData.overageUnitPrice}}</td>
+                        <td>{{tempData.overageAmount}}</td>
+                        <td>
+                            <button type="button" class="btn btn-success"
+                                    ng-click="billSend($index, tempData.billID, 'SENT')">
+                                Send
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class = "container" ng-model = "roleCustomerSuccessSales" ng-show = "roleCustomerSuccessSales">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3 ng-model = "headerData">
+                    {{headerData}}
+                </h3>
+            </div>
+            <div class="col-sm-6 pull-right">
+                <button type="button" class="btn btn-warning" id="logout" ng-click = "logout()">Logout</button>
+            </div>
+        </div>
+
+
+        <p ng-model = "descriptionData">{{descriptionData}}</p>
+
+        <div ng-model = "errorMessage" ng-show="errorMessage != null && errorMessage != undefined">
+            <span id="errorMessage">{{errorMessage}}</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Usage ID</th>
+                    <th>Customer ID</th>
+                    <th>Month</th>
+                    <th>Year</th>
+                    <th>Overage Units</th>
+                    <th>Overage Unit Price</th>
+                    <th>Overage Amount</th>
+                    <th>Approve/Reject</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="tempData in customerSuccessSalesData">
+                        <td>{{tempData.usageID}}</td>
+                        <td>{{tempData.customerID}}</td>
+                        <td>{{tempData.month}}</td>
+                        <td>{{tempData.year}}</td>
+                        <td>{{tempData.overageUnits}}</td>
+                        <td>{{tempData.overageUnitPrice}}</td>
+                        <td>{{tempData.overageAmount}}</td>
+                        <td>
+                            <button type="button" class="btn btn-success"
+                                    ng-click="approve_reject($index, tempData.billID, 'APPROVE', role)">
+                                Approve
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    ng-click="approve_reject($index, tempData.billID, 'REJECT', role)">
+                                Reject
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<script src="angularjs/home.js" type="text/javascript"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+body {
+
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+span#errorMessage {
+  color: #ff0000;
+}
+
+button#logout{
+  float: right;
+}
+
+legend {
+  text-align:center;
+  font-size:26px;
+}
+
+.well.login-box {
+  width:400px;
+  border:#000000 solid 1px;
+  margin:0 auto;
+  margin-top:30px;
+}
+
+span#errorMessage {
+  color: #ff0000;
+}
